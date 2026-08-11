@@ -1,0 +1,1686 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jejak Belajar — Pencatatan Homeschool</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --coral:#C1622C;
+    --coral-dark:#9B4A1E;
+    --coral-soft:#F1DCC8;
+    --sage:#6B8F71;
+    --sage-soft:#DCE7DC;
+    --gold:#C99A44;
+    --gold-soft:#F1E3C4;
+    --cream:#FBF6EF;
+    --card:#FFFFFF;
+    --ink:#2E2A24;
+    --ink-soft:#6B6157;
+    --line:#E9DFD2;
+    --radius:16px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height:100vh;
+    padding-bottom:76px;
+  }
+  h1,h2,h3,.display{
+    font-family:'Playfair Display', Georgia, serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
+  a{color:inherit;}
+  button{font-family:inherit;cursor:pointer;}
+
+  /* Header */
+  .app-header{
+    padding:28px 20px 20px;
+    max-width:820px;
+    margin:0 auto;
+  }
+  .app-header .eyebrow{
+    font-size:12.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--coral-dark);
+    font-weight:700;
+    margin-bottom:4px;
+  }
+  .app-header h1{
+    font-size:28px;
+    margin:0 0 2px;
+    color:var(--ink);
+  }
+  .app-header .sub{
+    color:var(--ink-soft);
+    font-size:14.5px;
+  }
+
+  /* Day-cycle signature element */
+  .cycle-wrap{
+    max-width:820px;
+    margin:0 auto 8px;
+    padding:0 20px;
+  }
+  .cycle-card{
+    background:linear-gradient(135deg, #FFF9F0 0%, var(--coral-soft) 100%);
+    border-radius:var(--radius);
+    padding:18px 20px;
+    display:flex;
+    align-items:center;
+    gap:16px;
+    border:1px solid var(--line);
+  }
+  .cycle-svg{flex-shrink:0;}
+  .cycle-text .label{font-size:12px;color:var(--coral-dark);font-weight:700;letter-spacing:0.06em;text-transform:uppercase;}
+  .cycle-text .val{font-family:'Playfair Display',serif;font-size:19px;margin-top:2px;}
+  .cycle-text .hint{font-size:13px;color:var(--ink-soft);margin-top:2px;}
+
+  main{max-width:820px;margin:0 auto;padding:0 20px 20px;}
+
+  .child-switch-wrap{
+    max-width:820px;margin:0 auto 10px;padding:0 20px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .child-tabs{display:flex;gap:6px;overflow-x:auto;flex:1;padding-bottom:2px;}
+  .child-tabs button{
+    flex-shrink:0;background:var(--card);border:1px solid var(--line);
+    padding:7px 14px;border-radius:999px;font-size:13px;font-weight:700;color:var(--ink-soft);
+  }
+  .child-tabs button.active{background:var(--sage);color:#fff;border-color:var(--sage);}
+  .child-manage-btn{
+    flex-shrink:0;background:var(--card);border:1px solid var(--line);
+    width:34px;height:34px;border-radius:50%;font-size:14px;color:var(--ink-soft);
+  }
+
+  /* Tabs (bottom on mobile) */
+  .tabbar{
+    position:fixed;bottom:0;left:0;right:0;
+    background:var(--card);
+    border-top:1px solid var(--line);
+    display:flex;
+    z-index:20;
+    padding:6px 8px calc(6px + env(safe-area-inset-bottom));
+  }
+  .tab-btn{
+    flex:1;background:none;border:none;
+    display:flex;flex-direction:column;align-items:center;gap:3px;
+    padding:8px 4px;border-radius:12px;
+    color:var(--ink-soft);font-size:11px;font-weight:500;
+    transition:background .15s, color .15s;
+  }
+  .tab-btn.active{color:var(--coral-dark);background:var(--coral-soft);}
+  .tab-btn svg{width:20px;height:20px;}
+
+  section.view{display:none;animation:fade .25s ease;}
+  section.view.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:18px;
+    margin-bottom:14px;
+  }
+  .card h2{font-size:18px;margin:0 0 12px;}
+  .card h3{font-size:15px;margin:0 0 8px;}
+
+  .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+  .stat{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:14px 12px;text-align:center;
+  }
+  .stat .n{font-family:'Playfair Display',serif;font-size:24px;color:var(--coral-dark);}
+  .stat .l{font-size:11.5px;color:var(--ink-soft);margin-top:2px;line-height:1.3;}
+
+  label{display:block;font-size:13px;font-weight:700;color:var(--ink);margin:12px 0 6px;}
+  label:first-child{margin-top:0;}
+  input[type=text],input[type=date],input[type=number],textarea,select{
+    width:100%;
+    border:1px solid var(--line);
+    background:#FFFDF9;
+    border-radius:10px;
+    padding:10px 12px;
+    font-family:inherit;
+    font-size:14.5px;
+    color:var(--ink);
+  }
+  textarea{resize:vertical;min-height:64px;}
+  input:focus,textarea:focus,select:focus{
+    outline:2px solid var(--coral);
+    outline-offset:1px;
+    border-color:var(--coral);
+  }
+
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    background:var(--coral);color:#fff;border:none;
+    padding:11px 18px;border-radius:10px;font-weight:700;font-size:14px;
+  }
+  .btn:active{background:var(--coral-dark);}
+  .btn.secondary{background:var(--sage-soft);color:#3C5240;}
+  .btn.ghost{background:transparent;color:var(--coral-dark);border:1px solid var(--coral-soft);}
+  .btn.small{padding:7px 12px;font-size:13px;}
+  .btn.danger{background:#fff;color:#B4472B;border:1px solid #EBC8B8;}
+  .btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+
+  .date-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px;}
+  .date-nav .cur{font-family:'Playfair Display',serif;font-size:17px;text-align:center;flex:1;}
+  .date-nav button{background:var(--card);border:1px solid var(--line);border-radius:10px;width:38px;height:38px;font-size:16px;color:var(--coral-dark);}
+
+  .pill{
+    display:inline-block;font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:999px;
+  }
+  .pill.plan{background:var(--gold-soft);color:#8A6A1F;}
+  .pill.review{background:var(--sage-soft);color:#3C5240;}
+
+  .chip-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+  .chip{
+    background:var(--coral-soft);color:var(--coral-dark);
+    padding:7px 12px;border-radius:999px;font-size:13.5px;font-weight:500;
+    display:flex;align-items:center;gap:8px;
+  }
+  .chip button{background:none;border:none;color:var(--coral-dark);font-size:14px;line-height:1;opacity:.7;}
+
+  .day-tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;padding-bottom:4px;}
+  .day-tabs button{
+    flex-shrink:0;background:var(--card);border:1px solid var(--line);
+    padding:8px 14px;border-radius:999px;font-size:13px;font-weight:600;color:var(--ink-soft);
+  }
+  .day-tabs button.active{background:var(--coral);color:#fff;border-color:var(--coral);}
+
+  .activity-row{
+    display:flex;align-items:flex-start;gap:10px;
+    padding:10px 0;border-bottom:1px solid var(--line);
+  }
+  .activity-row:last-child{border-bottom:none;}
+  .activity-row .txt{flex:1;font-size:14.5px;line-height:1.4;}
+  .activity-row button{background:none;border:none;color:#B4472B;font-size:13px;opacity:.75;}
+
+  .empty{
+    text-align:center;padding:32px 16px;color:var(--ink-soft);
+  }
+  .empty .ico{font-size:30px;margin-bottom:8px;}
+  .empty .t{font-family:'Playfair Display',serif;font-size:16px;color:var(--ink);margin-bottom:4px;}
+  .empty .d{font-size:13px;}
+
+  .m-card{
+    border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px;
+    background:#FFFDF9;
+  }
+  .m-card.done{background:var(--sage-soft);border-color:#C6D8C8;}
+  .m-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+  .m-title{font-weight:700;font-size:14.5px;}
+  .m-cat{font-size:11.5px;color:var(--ink-soft);margin-top:2px;}
+  .m-note{font-size:13px;color:var(--ink-soft);margin-top:6px;line-height:1.4;}
+  .m-check{
+    width:26px;height:26px;border-radius:50%;border:2px solid var(--sage);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;background:#fff;
+    font-size:14px;color:var(--sage);font-weight:700;
+  }
+  .m-check.on{background:var(--sage);color:#fff;}
+
+  .filter-row{display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px;}
+  .filter-row button{
+    flex-shrink:0;background:var(--card);border:1px solid var(--line);
+    padding:7px 13px;border-radius:999px;font-size:12.5px;font-weight:600;color:var(--ink-soft);
+  }
+  .filter-row button.active{background:var(--sage);color:#fff;border-color:var(--sage);}
+  #milestoneAgeFilters button.active{background:var(--gold);color:#fff;border-color:var(--gold);}
+
+  .modal-bg{
+    position:fixed;inset:0;background:rgba(46,42,36,0.45);
+    display:none;align-items:flex-end;justify-content:center;z-index:50;
+  }
+  .modal-bg.open{display:flex;}
+  .modal{
+    background:var(--cream);width:100%;max-width:520px;
+    border-radius:20px 20px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom));
+    max-height:85vh;overflow-y:auto;
+  }
+  .modal h2{margin-top:0;font-size:19px;}
+  .close-x{float:right;background:none;border:none;font-size:20px;color:var(--ink-soft);}
+
+  .section-title{font-size:12.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--coral-dark);font-weight:700;margin:22px 0 10px;}
+  .section-title:first-child{margin-top:0;}
+
+  footer.credit{text-align:center;color:var(--ink-soft);font-size:11.5px;padding:20px 0 8px;}
+
+  /* Report / period dashboard */
+  .period-tabs{display:flex;gap:6px;margin-bottom:14px;}
+  .period-tabs button{
+    flex:1;background:var(--card);border:1px solid var(--line);
+    padding:9px 6px;border-radius:10px;font-size:12.5px;font-weight:700;color:var(--ink-soft);
+  }
+  .period-tabs button.active{background:var(--coral);color:#fff;border-color:var(--coral);}
+  .period-label{font-size:12.5px;color:var(--ink-soft);margin-bottom:12px;}
+  .mood-dist{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
+  .mood-dist .md{background:var(--gold-soft);color:#8A6A1F;font-size:12.5px;font-weight:600;padding:5px 11px;border-radius:999px;}
+  .report-row{
+    display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);
+  }
+  .report-row:last-child{border-bottom:none;}
+  .report-row .thumb{
+    width:38px;height:38px;border-radius:8px;object-fit:cover;flex-shrink:0;background:var(--coral-soft);
+  }
+  .report-row .rinfo{flex:1;min-width:0;}
+  .report-row .rdate{font-size:13.5px;font-weight:700;}
+  .report-row .rmeta{font-size:12px;color:var(--ink-soft);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .report-row .rjump{background:none;border:none;color:var(--coral-dark);font-size:12px;font-weight:700;flex-shrink:0;}
+  .cat-dist{margin-top:8px;}
+  .cat-dist-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px dashed var(--line);}
+  .cat-dist-row:last-child{border-bottom:none;}
+
+  /* Photo upload */
+  .photo-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;}
+  .photo-thumb{
+    position:relative;width:72px;height:72px;border-radius:12px;overflow:hidden;border:1px solid var(--line);
+  }
+  .photo-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .photo-thumb .rm{
+    position:absolute;top:2px;right:2px;background:rgba(46,42,36,0.65);color:#fff;
+    border:none;border-radius:50%;width:20px;height:20px;font-size:11px;line-height:1;
+  }
+  .photo-add{
+    width:72px;height:72px;border-radius:12px;border:1.5px dashed var(--coral-soft);
+    background:#FFFDF9;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    color:var(--coral-dark);font-size:11px;font-weight:600;gap:2px;
+  }
+  .photo-add span{font-size:18px;}
+
+  .child-row{
+    display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--line);
+  }
+  .child-row:last-child{border-bottom:none;}
+  .child-row input{flex:1;}
+  .child-row button{flex-shrink:0;background:none;border:none;font-size:12.5px;font-weight:700;padding:6px 8px;}
+  .child-row .cSave{color:var(--sage);}
+  .child-row .cDel{color:#B4472B;}
+
+  @media(min-width:640px){
+    .tabbar{position:sticky;bottom:0;box-shadow:0 -2px 12px rgba(0,0,0,0.04);}
+  }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="eyebrow">Jejak Belajar</div>
+  <h1>Pencatatan Homeschool</h1>
+  <div class="sub" id="todayLabel">—</div>
+</div>
+
+<div class="child-switch-wrap">
+  <div class="child-tabs" id="childTabs"></div>
+  <button class="child-manage-btn" id="openChildModal">⚙</button>
+</div>
+
+<div class="cycle-wrap">
+  <div class="cycle-card">
+    <svg class="cycle-svg" width="52" height="52" viewBox="0 0 52 52" id="cycleSvg">
+      <circle cx="26" cy="26" r="23" fill="none" stroke="#EFDFC9" stroke-width="5"/>
+      <circle id="cycleArc" cx="26" cy="26" r="23" fill="none" stroke="#C1622C" stroke-width="5"
+        stroke-linecap="round" stroke-dasharray="144.5" stroke-dashoffset="144.5"
+        transform="rotate(-90 26 26)"/>
+      <text x="26" y="31" text-anchor="middle" font-size="16" id="cycleIcon">🌱</text>
+    </svg>
+    <div class="cycle-text">
+      <div class="label" id="cycleStage">Plan</div>
+      <div class="val" id="cycleVal">Belum ada rencana hari ini</div>
+      <div class="hint" id="cycleHint">Mulai dari tab Plan–Do–Review</div>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <!-- DASHBOARD -->
+  <section class="view active" id="view-dashboard">
+    <div class="period-tabs" id="periodTabs">
+      <button data-p="today">Harian</button>
+      <button data-p="week">Mingguan</button>
+      <button data-p="month">Bulanan</button>
+      <button data-p="all">Keseluruhan</button>
+    </div>
+    <div class="period-label" id="periodLabel"></div>
+
+    <div class="stat-row" id="reportStatRow"></div>
+
+    <div class="card" id="reportMoodCard" style="display:none;">
+      <h2>Suasana belajar</h2>
+      <div class="mood-dist" id="reportMoodDist"></div>
+    </div>
+
+    <div class="card" id="reportAspectCard" style="display:none;">
+      <h2>Aspek yang dilatih (dari rencana)</h2>
+      <div class="cat-dist" id="reportAspectDist"></div>
+    </div>
+
+    <div class="card" id="reportCatCard" style="display:none;">
+      <h2>Milestone per kategori</h2>
+      <div class="cat-dist" id="reportCatDist"></div>
+    </div>
+
+    <div class="card">
+      <h2 id="reportListTitle">Catatan harian</h2>
+      <div id="reportList"></div>
+    </div>
+
+    <div class="card" id="dashTodayCard">
+      <h2>Jadwal hari ini · <span id="dashTodayDayName"></span></h2>
+      <div id="dashScheduleList"></div>
+    </div>
+  </section>
+
+  <!-- PLAN DO REVIEW -->
+  <section class="view" id="view-pdr">
+    <div class="date-nav">
+      <button id="pdrPrev">‹</button>
+      <div class="cur" id="pdrDateLabel">—</div>
+      <button id="pdrNext">›</button>
+    </div>
+
+    <div class="card">
+      <h2><span class="pill plan">PLAN</span></h2>
+      <label for="planInput">Tambah rencana kegiatan</label>
+      <input type="text" id="planInput" placeholder="mis. Mengenal huruf hijaiyah Alif–Ba" style="margin-bottom:8px;">
+      <div style="display:flex;gap:8px;">
+        <select id="planCategorySelect" style="flex:1;"></select>
+        <button class="btn small" id="planAddBtn">+ Tambah</button>
+      </div>
+      <div id="planChips" class="chip-list"></div>
+    </div>
+
+    <div class="card">
+      <h2>DO</h2>
+      <label for="doInput">Catatan pelaksanaan &amp; observasi</label>
+      <textarea id="doInput" placeholder="Apa yang benar-benar terjadi hari ini? Bagaimana respons anak?"></textarea>
+
+      <label>Foto kegiatan (opsional)</label>
+      <div class="photo-grid" id="photoGrid"></div>
+      <input type="file" id="photoInput" accept="image/*" multiple style="display:none;">
+    </div>
+
+    <div class="card">
+      <h2><span class="pill review">REVIEW</span></h2>
+      <label for="reviewInput">Refleksi</label>
+      <textarea id="reviewInput" placeholder="Apa yang berhasil? Apa yang perlu disesuaikan besok?"></textarea>
+      <label for="moodInput">Suasana belajar hari ini</label>
+      <select id="moodInput">
+        <option value="">— pilih —</option>
+        <option value="Sangat antusias">🌟 Sangat antusias</option>
+        <option value="Baik">🙂 Baik</option>
+        <option value="Biasa saja">😐 Biasa saja</option>
+        <option value="Perlu penyesuaian">🌧️ Perlu penyesuaian</option>
+      </select>
+    </div>
+
+    <div class="card">
+      <h2>📝 Catatan Bebas</h2>
+      <label for="notesInput">Sekadar catatan (opsional, di luar Plan-Do-Review)</label>
+      <textarea id="notesInput" placeholder="Apa saja — pengingat, ide, hal lucu yang kejadian hari ini, dsb."></textarea>
+    </div>
+
+    <button class="btn" id="pdrSaveBtn" style="width:100%;">Simpan catatan hari ini</button>
+  </section>
+
+  <!-- JADWAL -->
+  <section class="view" id="view-schedule">
+    <div class="day-tabs" id="dayTabs"></div>
+    <div class="card">
+      <h2 id="scheduleDayTitle">Senin</h2>
+      <div id="scheduleList"></div>
+      <div class="btn-row">
+        <input type="text" id="scheduleInput" placeholder="mis. Tahsin — Iqra jilid 2" style="flex:1;">
+        <button class="btn small" id="scheduleAddBtn">Tambah</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- MILESTONE -->
+  <section class="view" id="view-milestone">
+    <div class="btn-row" style="margin-top:0;margin-bottom:14px;">
+      <button class="btn" id="openMilestoneModal" style="flex:1;">+ Tambah milestone</button>
+      <button class="btn ghost" id="openCategoryModal">Kelola kategori</button>
+    </div>
+    <div class="filter-row" id="milestoneAgeFilters" style="margin-bottom:8px;"></div>
+    <div class="filter-row" id="milestoneFilters"></div>
+    <div id="milestoneList"></div>
+  </section>
+
+  <!-- DATA / BACKUP -->
+  <section class="view" id="view-data">
+    <div class="card">
+      <h2>Ekspor laporan</h2>
+      <p style="font-size:13.5px;color:var(--ink-soft);line-height:1.5;">
+        Unduh seluruh catatan Plan-Do-Review, ringkasan statistik, dan daftar pencapaian milestone dalam satu file.
+      </p>
+      <div class="btn-row">
+        <button class="btn secondary" id="exportExcelBtn">📊 Export ke Excel (.xlsx)</button>
+        <button class="btn secondary" id="exportPdfBtn">📄 Export ke PDF</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Cadangkan &amp; pulihkan data</h2>
+      <p style="font-size:13.5px;color:var(--ink-soft);line-height:1.5;">
+        Semua data tersimpan di perangkat ini (browser). Unduh cadangan secara berkala agar catatan tidak hilang saat berganti perangkat atau membersihkan cache.
+      </p>
+      <div class="btn-row">
+        <button class="btn secondary" id="exportBtn">⬇ Unduh cadangan (.json)</button>
+        <button class="btn ghost" id="importBtn">⬆ Pulihkan dari file</button>
+      </div>
+      <input type="file" id="importFile" accept=".json" style="display:none;">
+    </div>
+    <div class="card">
+      <h2>Reset data</h2>
+      <p style="font-size:13.5px;color:var(--ink-soft);">Menghapus semua catatan Plan-Do-Review, jadwal, dan milestone secara permanen dari perangkat ini.</p>
+      <button class="btn danger" id="resetBtn">Hapus semua data</button>
+    </div>
+  </section>
+
+</main>
+
+<div class="tabbar" id="tabbar">
+  <button class="tab-btn active" data-view="dashboard">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg>
+    Beranda
+  </button>
+  <button class="tab-btn" data-view="pdr">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+    Plan-Do-Review
+  </button>
+  <button class="tab-btn" data-view="schedule">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>
+    Jadwal
+  </button>
+  <button class="tab-btn" data-view="milestone">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.9 6.9L22 10l-5 5 1.2 7L12 18.5 5.8 22 7 15l-5-5 7.1-1.1z"/></svg>
+    Milestone
+  </button>
+  <button class="tab-btn" data-view="data">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>
+    Data
+  </button>
+</div>
+
+<div class="modal-bg" id="milestoneModalBg">
+  <div class="modal">
+    <button class="close-x" id="closeMilestoneModal">✕</button>
+    <h2>Tambah milestone</h2>
+    <label>Judul milestone</label>
+    <input type="text" id="mTitle" placeholder="mis. Bisa mengikat tali sepatu sendiri">
+    <label>Kategori</label>
+    <select id="mCategory"></select>
+    <label>Target usia (opsional)</label>
+    <input type="text" id="mAge" list="mAgeList" placeholder="mis. 3 tahun, atau custom seperti 18 bulan">
+    <datalist id="mAgeList"></datalist>
+    <label>Catatan (opsional)</label>
+    <textarea id="mNote" placeholder="Konteks atau detail tambahan"></textarea>
+    <div class="btn-row">
+      <button class="btn" id="mSaveBtn" style="flex:1;">Simpan milestone</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="categoryModalBg">
+  <div class="modal">
+    <button class="close-x" id="closeCategoryModal">✕</button>
+    <h2>Kelola kategori aspek</h2>
+    <p style="font-size:13px;color:var(--ink-soft);margin:0 0 4px;">Kategori ini dipakai untuk menandai milestone dan tag rencana kegiatan.</p>
+    <div id="categoryChips" class="chip-list" style="margin:10px 0 14px;"></div>
+    <label>Tambah kategori baru</label>
+    <div style="display:flex;gap:8px;">
+      <input type="text" id="categoryInput" placeholder="mis. Sensorik" style="flex:1;">
+      <button class="btn small" id="categoryAddBtn">+</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="childModalBg">
+  <div class="modal">
+    <button class="close-x" id="closeChildModal">✕</button>
+    <h2>Kelola profil anak</h2>
+    <p style="font-size:13px;color:var(--ink-soft);margin:0 0 4px;">Setiap anak punya catatan Plan-Do-Review, jadwal, dan milestone masing-masing (kategori aspek tetap dipakai bersama).</p>
+    <div id="childList" style="margin:12px 0 16px;"></div>
+    <label>Tambah profil anak baru</label>
+    <div style="display:flex;gap:8px;">
+      <input type="text" id="childInput" placeholder="mis. Anak 2 / nama anak">
+      <button class="btn small" id="childAddBtn">+</button>
+    </div>
+  </div>
+</div>
+
+<footer class="credit">Data tersimpan lokal di perangkat ini · tidak terhubung ke server</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script>
+(function(){
+  const STORE_KEY = 'jejakbelajar_data_v1';       // legacy single-child key (for migration)
+  const MULTI_KEY = 'jejakbelajar_multi_v1';
+  const DAYS = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
+  const DEFAULT_CATS = ['Motorik','Kognitif','Bahasa','Sosial-Emosional','Spiritual / Fitrah Keimanan','Kemandirian'];
+  const SOURCE_LABEL = 'CDC · Learn the Signs. Act Early. (rev. 2022)';
+
+  function seedMilestones(){
+    // Evidence-based milestones adapted from CDC "Learn the Signs. Act Early." checklist
+    // (2022 revision, items most children reach by a given age — 75% threshold).
+    // Kept fully editable/removable; add your own alongside these.
+    const items = [
+      // 1 tahun
+      ['Bermain permainan interaktif dengan kamu, mis. cilukba/tepuk tangan','Sosial-Emosional','1 tahun'],
+      ['Melambaikan tangan "dadah"','Bahasa','1 tahun'],
+      ['Memanggil orang tua "mama"/"papa" atau panggilan khusus lain','Bahasa','1 tahun'],
+      ['Memahami kata "tidak" (berhenti sejenak atau berhenti saat dikatakan)','Bahasa','1 tahun'],
+      ['Memasukkan benda ke dalam wadah, mis. balok ke dalam cangkir','Kognitif','1 tahun'],
+      ['Mencari benda yang disembunyikan di depannya, mis. mainan di balik selimut','Kognitif','1 tahun'],
+      ['Berdiri berpegangan pada sesuatu untuk bangkit','Motorik','1 tahun'],
+      ['Berjalan sambil berpegangan pada perabot','Motorik','1 tahun'],
+      ['Minum dari cangkir tanpa tutup saat dipegangkan','Motorik','1 tahun'],
+      ['Mengambil benda kecil dengan ibu jari dan telunjuk, mis. potongan kecil makanan','Motorik','1 tahun'],
+      // 2 tahun
+      ['Menyadari saat orang lain terluka/sedih, mis. berhenti sejenak atau terlihat sedih saat ada yang menangis','Sosial-Emosional','2 tahun'],
+      ['Melihat wajahmu untuk tahu cara bereaksi pada situasi baru','Sosial-Emosional','2 tahun'],
+      ['Menunjuk benda di buku saat diminta, mis. "Mana beruangnya?"','Bahasa','2 tahun'],
+      ['Mengucapkan minimal 2 kata bersamaan, mis. "Susu lagi"','Bahasa','2 tahun'],
+      ['Menunjuk minimal 2 bagian tubuh saat diminta','Bahasa','2 tahun'],
+      ['Menggunakan gestur lebih dari sekadar melambai/menunjuk, mis. mengecup jarak jauh atau mengangguk','Bahasa','2 tahun'],
+      ['Memegang sesuatu di satu tangan sambil memakai tangan lain, mis. pegang wadah sambil buka tutupnya','Kognitif','2 tahun'],
+      ['Mencoba menggunakan saklar, kenop, atau tombol pada mainan','Kognitif','2 tahun'],
+      ['Bermain dengan lebih dari satu mainan sekaligus, mis. menaruh makanan mainan di piring mainan','Kognitif','2 tahun'],
+      ['Menendang bola','Motorik','2 tahun'],
+      ['Berlari','Motorik','2 tahun'],
+      ['Menaiki beberapa anak tangga (bukan memanjat) dengan atau tanpa bantuan','Motorik','2 tahun'],
+      ['Makan menggunakan sendok','Motorik','2 tahun'],
+      // 3 tahun
+      ['Bisa tenang kembali dalam 10 menit setelah ditinggal, mis. saat diantar ke tempat penitipan','Sosial-Emosional','3 tahun'],
+      ['Menyadari kehadiran anak lain dan bergabung bermain','Sosial-Emosional','3 tahun'],
+      ['Bercakap-cakap dengan minimal 2 kali bergantian bicara','Bahasa','3 tahun'],
+      ['Bertanya "siapa", "apa", "di mana", atau "kenapa"','Bahasa','3 tahun'],
+      ['Menyebutkan aksi yang sedang terjadi di gambar/buku, mis. "lari", "makan"','Bahasa','3 tahun'],
+      ['Menyebutkan nama depannya sendiri saat ditanya','Bahasa','3 tahun'],
+      ['Berbicara cukup jelas untuk dimengerti orang lain, sebagian besar waktu','Bahasa','3 tahun'],
+      ['Menggambar lingkaran saat dicontohkan','Kognitif','3 tahun'],
+      ['Menghindari benda panas, mis. kompor, setelah diperingatkan','Kognitif','3 tahun'],
+      ['Merangkai benda, mis. manik-manik besar atau makaroni','Motorik','3 tahun'],
+      ['Memakai sebagian pakaian sendiri, mis. celana longgar atau jaket','Motorik','3 tahun'],
+      ['Menggunakan garpu saat makan','Motorik','3 tahun'],
+      // 4 tahun
+      ['Berpura-pura menjadi sesuatu/seseorang lain saat bermain (guru, superhero, dsb.)','Sosial-Emosional','4 tahun'],
+      ['Mengajak bermain anak lain bila sedang tidak ada teman di sekitar','Sosial-Emosional','4 tahun'],
+      ['Menghibur orang lain yang terluka/sedih, mis. memeluk teman yang menangis','Sosial-Emosional','4 tahun'],
+      ['Menghindari bahaya, mis. tidak melompat dari tempat tinggi di area bermain','Sosial-Emosional','4 tahun'],
+      ['Senang menjadi "penolong"','Sosial-Emosional','4 tahun'],
+      ['Mengubah perilaku sesuai tempat, mis. di tempat ibadah, perpustakaan, taman bermain','Sosial-Emosional','4 tahun'],
+      ['Mengucapkan kalimat dengan 4 kata atau lebih','Bahasa','4 tahun'],
+      ['Menyanyikan/mengucapkan sebagian kata dari lagu, cerita, atau sajak','Bahasa','4 tahun'],
+      ['Menceritakan minimal satu hal yang terjadi hari itu, mis. "Aku main bola"','Bahasa','4 tahun'],
+      ['Menjawab pertanyaan sederhana, mis. "Jaket buat apa?"','Bahasa','4 tahun'],
+      ['Menyebutkan beberapa warna benda','Kognitif','4 tahun'],
+      ['Menebak kelanjutan cerita yang sudah dikenal','Kognitif','4 tahun'],
+      ['Menggambar orang dengan minimal 3 bagian tubuh','Kognitif','4 tahun'],
+      ['Menangkap bola besar sebagian besar percobaan','Motorik','4 tahun'],
+      ['Mengambil makanan/menuang air sendiri dengan pengawasan orang dewasa','Motorik','4 tahun'],
+      ['Membuka beberapa jenis kancing baju','Motorik','4 tahun'],
+      ['Memegang krayon/pensil dengan jari dan ibu jari (bukan digenggam)','Motorik','4 tahun'],
+    ];
+    return items.map((it,i)=>({
+      id: 'seed_'+i,
+      title: it[0],
+      category: it[1],
+      age: it[2],
+      note: '',
+      source: SOURCE_LABEL,
+      achieved:false,
+      achievedDate:null
+    }));
+  }
+
+  function newChildId(){ return 'child_'+Date.now()+'_'+Math.random().toString(36).slice(2,7); }
+
+  function defaultChildData(seedMs){
+    return {
+      pdr: {},          // { 'YYYY-MM-DD': {plan:[{text,category}], doNotes:'', review:'', notes:'', mood:'', photos:[]} }
+      schedule: {},      // { 'Senin': ['item1','item2'], ... }
+      milestones: seedMs ? seedMilestones() : []
+    };
+  }
+
+  function defaultMasterData(){
+    const id = newChildId();
+    return {
+      categories: [...DEFAULT_CATS],
+      children: [{id, name:'Anak 1'}],
+      activeChildId: id,
+      childData: { [id]: defaultChildData(true) }
+    };
+  }
+
+  function normalizePlan(plan){
+    // migrate old string-array plan format to {text, category} objects
+    if(!Array.isArray(plan)) return [];
+    return plan.map(p => (typeof p === 'string') ? {text:p, category:''} : p);
+  }
+
+  function normalizeChildData(cd){
+    if(!cd.pdr) cd.pdr = {};
+    if(!cd.schedule) cd.schedule = {};
+    if(!cd.milestones) cd.milestones = [];
+    Object.keys(cd.pdr).forEach(k=>{
+      cd.pdr[k].plan = normalizePlan(cd.pdr[k].plan);
+      if(typeof cd.pdr[k].notes !== 'string') cd.pdr[k].notes = '';
+      if(!Array.isArray(cd.pdr[k].photos)) cd.pdr[k].photos = [];
+    });
+    return cd;
+  }
+
+  function loadMaster(){
+    try{
+      const raw = localStorage.getItem(MULTI_KEY);
+      if(raw){
+        const d = JSON.parse(raw);
+        if(!d.categories || !d.categories.length) d.categories = [...DEFAULT_CATS];
+        if(!d.children || !d.children.length){
+          const id = newChildId();
+          d.children = [{id, name:'Anak 1'}];
+          d.activeChildId = id;
+          d.childData = d.childData || {};
+        }
+        if(!d.childData) d.childData = {};
+        d.children.forEach(c=>{
+          if(!d.childData[c.id]) d.childData[c.id] = defaultChildData(false);
+          normalizeChildData(d.childData[c.id]);
+        });
+        if(!d.activeChildId || !d.childData[d.activeChildId]) d.activeChildId = d.children[0].id;
+        return d;
+      }
+      // migrate legacy single-child data if present
+      const legacyRaw = localStorage.getItem(STORE_KEY);
+      if(legacyRaw){
+        const legacy = JSON.parse(legacyRaw);
+        const id = newChildId();
+        const cd = normalizeChildData({
+          pdr: legacy.pdr || {},
+          schedule: legacy.schedule || {},
+          milestones: legacy.milestones || seedMilestones()
+        });
+        const master = {
+          categories: (legacy.categories && legacy.categories.length) ? legacy.categories : [...DEFAULT_CATS],
+          children: [{id, name:'Anak 1'}],
+          activeChildId: id,
+          childData: { [id]: cd }
+        };
+        return master;
+      }
+      return defaultMasterData();
+    }catch(e){ return defaultMasterData(); }
+  }
+
+  function saveMaster(){ localStorage.setItem(MULTI_KEY, JSON.stringify(master)); }
+  function save(){ saveMaster(); }
+
+  let master = loadMaster();
+  saveMaster(); // persist migration immediately so legacy key is no longer needed
+
+  // `state` is a live view into the active child's data — mutating state.pdr /
+  // state.schedule / state.milestones mutates master.childData[activeId] directly
+  // because they're the same object references (see syncStateToActiveChild).
+  let state = {};
+  function syncStateToActiveChild(){
+    const cd = master.childData[master.activeChildId];
+    state = { categories: master.categories, pdr: cd.pdr, schedule: cd.schedule, milestones: cd.milestones };
+  }
+  syncStateToActiveChild();
+
+  function fmtDate(d){
+    const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`;
+  }
+  function pretty(dstr){
+    const d = new Date(dstr+'T00:00:00');
+    return d.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  }
+  function todayKey(){ return fmtDate(new Date()); }
+  function dayNameOf(dstr){
+    const idx = new Date(dstr+'T00:00:00').getDay(); // 0=Sun
+    const map = [6,0,1,2,3,4,5]; // convert JS Sun=0 to our Senin-first index
+    return DAYS[map[idx]];
+  }
+
+  let currentPdrDate = todayKey();
+  let currentScheduleDay = dayNameOf(todayKey());
+  let currentMilestoneFilter = 'Semua';
+  let currentAgeFilter = 'Semua';
+
+  // ---------- NAV ----------
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('view-'+btn.dataset.view).classList.add('active');
+      if(btn.dataset.view==='dashboard') renderDashboard();
+    });
+  });
+
+  // ---------- HEADER ----------
+  function renderHeader(){
+    document.getElementById('todayLabel').textContent = pretty(todayKey());
+  }
+
+  // ---------- SIGNATURE CYCLE ELEMENT ----------
+  function renderCycle(){
+    const t = state.pdr[todayKey()] || {plan:[],doNotes:'',review:'',mood:''};
+    const hasPlan = t.plan && t.plan.length>0;
+    const hasDo = t.doNotes && t.doNotes.trim().length>0;
+    const hasReview = t.review && t.review.trim().length>0;
+    let stage=0;
+    if(hasPlan) stage=1;
+    if(hasDo) stage=2;
+    if(hasReview) stage=3;
+    const circumference = 144.5;
+    const pct = stage/3;
+    const offset = circumference - (circumference*pct);
+    document.getElementById('cycleArc').setAttribute('stroke-dashoffset', offset);
+    const labels = ['Belum mulai','Plan','Do','Review'];
+    const icons = ['🌱','📝','🖐️','✨'];
+    const stageColors = ['#EFDFC9','#C99A44','#C1622C','#6B8F71'];
+    document.getElementById('cycleStage').textContent = labels[stage];
+    document.getElementById('cycleIcon').textContent = icons[stage];
+    document.getElementById('cycleArc').setAttribute('stroke', stageColors[stage] || '#C1622C');
+    if(stage===0){
+      document.getElementById('cycleVal').textContent = 'Belum ada rencana hari ini';
+      document.getElementById('cycleHint').textContent = 'Mulai dari tab Plan–Do–Review';
+    } else if(stage===1){
+      document.getElementById('cycleVal').textContent = `${t.plan.length} rencana tercatat`;
+      document.getElementById('cycleHint').textContent = 'Lanjut catat pelaksanaan (Do)';
+    } else if(stage===2){
+      document.getElementById('cycleVal').textContent = 'Pelaksanaan sudah dicatat';
+      document.getElementById('cycleHint').textContent = 'Tulis refleksi untuk melengkapi siklus';
+    } else {
+      document.getElementById('cycleVal').textContent = 'Siklus hari ini lengkap';
+      document.getElementById('cycleHint').textContent = 'Plan – Do – Review selesai 🎉';
+    }
+  }
+
+  // ---------- DASHBOARD ----------
+  function computeStreak(){
+    let streak=0;
+    let d = new Date();
+    while(true){
+      const key = fmtDate(d);
+      const entry = state.pdr[key];
+      const hasContent = entry && ((entry.plan&&entry.plan.length) || (entry.doNotes&&entry.doNotes.trim()) || (entry.review&&entry.review.trim()));
+      if(hasContent){ streak++; d.setDate(d.getDate()-1); }
+      else break;
+    }
+    return streak;
+  }
+  let currentPeriod = 'today';
+
+  function hasContent(entry){
+    return entry && ((entry.plan&&entry.plan.length) || (entry.doNotes&&entry.doNotes.trim()) || (entry.review&&entry.review.trim()) || (entry.notes&&entry.notes.trim()) || (entry.photos&&entry.photos.length));
+  }
+
+  function getPeriodRange(period){
+    const now = new Date(); now.setHours(0,0,0,0);
+    if(period==='today'){
+      return {start:new Date(now), end:new Date(now), label:pretty(todayKey())};
+    }
+    if(period==='week'){
+      const day = now.getDay();
+      const diffToMon = (day===0?-6:1-day);
+      const monday = new Date(now); monday.setDate(now.getDate()+diffToMon);
+      const sunday = new Date(monday); sunday.setDate(monday.getDate()+6);
+      return {start:monday, end:sunday, label:`${monday.toLocaleDateString('id-ID',{day:'numeric',month:'short'})} – ${sunday.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})}`};
+    }
+    if(period==='month'){
+      const start = new Date(now.getFullYear(), now.getMonth(), 1);
+      const end = new Date(now.getFullYear(), now.getMonth()+1, 0);
+      return {start, end, label: now.toLocaleDateString('id-ID',{month:'long',year:'numeric'})};
+    }
+    // all
+    const keys = Object.keys(state.pdr).sort();
+    const start = keys.length ? new Date(keys[0]+'T00:00:00') : now;
+    return {start, end: now, label: keys.length ? `Sejak ${pretty(keys[0])}` : 'Belum ada catatan'};
+  }
+
+  function entriesInRange(start, end){
+    return Object.keys(state.pdr)
+      .filter(k=>{
+        const d = new Date(k+'T00:00:00');
+        return d>=start && d<=end && hasContent(state.pdr[k]);
+      })
+      .sort((a,b)=> b.localeCompare(a))
+      .map(k=>({date:k, entry:state.pdr[k]}));
+  }
+
+  function milestonesInRange(start, end, allTime){
+    return state.milestones.filter(m=>{
+      if(!m.achieved) return false;
+      if(allTime) return true;
+      if(!m.achievedDate) return false;
+      const d = new Date(m.achievedDate+'T00:00:00');
+      return d>=start && d<=end;
+    });
+  }
+
+  function renderReportStats(period, range, entries){
+    const row = document.getElementById('reportStatRow');
+    const totalPhotos = entries.reduce((sum,e)=> sum + (e.entry.photos?e.entry.photos.length:0), 0);
+    const msInRange = milestonesInRange(range.start, range.end, period==='all');
+
+    if(period==='today'){
+      const t = getPdr(todayKey());
+      row.innerHTML = `
+        <div class="stat"><div class="n">${computeStreak()}</div><div class="l">hari beruntun mencatat</div></div>
+        <div class="stat"><div class="n">${t.plan.length}</div><div class="l">rencana kegiatan</div></div>
+        <div class="stat"><div class="n">${t.photos.length}</div><div class="l">foto diunggah</div></div>
+      `;
+    } else {
+      const daysLabel = period==='week' ? 'dari 7 hari' : (period==='month' ? 'hari tercatat' : 'total hari tercatat');
+      row.innerHTML = `
+        <div class="stat"><div class="n">${entries.length}</div><div class="l">${daysLabel}</div></div>
+        <div class="stat"><div class="n">${msInRange.length}</div><div class="l">milestone tercapai</div></div>
+        <div class="stat"><div class="n">${totalPhotos}</div><div class="l">foto diunggah</div></div>
+      `;
+    }
+  }
+
+  function renderMoodDist(entries){
+    const card = document.getElementById('reportMoodCard');
+    const counts = {};
+    entries.forEach(e=>{ if(e.entry.mood) counts[e.entry.mood] = (counts[e.entry.mood]||0)+1; });
+    const keys = Object.keys(counts);
+    if(!keys.length){ card.style.display='none'; return; }
+    card.style.display='block';
+    document.getElementById('reportMoodDist').innerHTML = keys.map(k=>`<span class="md">${escapeHtml(k)} · ${counts[k]}</span>`).join('');
+  }
+
+  function renderCatDist(period, range){
+    const card = document.getElementById('reportCatCard');
+    const ms = milestonesInRange(range.start, range.end, period==='all').length ? milestonesInRange(range.start, range.end, period==='all') : [];
+    if(period==='today' || !ms.length){ card.style.display='none'; return; }
+    const counts = {};
+    ms.forEach(m=> counts[m.category] = (counts[m.category]||0)+1 );
+    card.style.display='block';
+    document.getElementById('reportCatDist').innerHTML = Object.keys(counts).map(c=>`<div class="cat-dist-row"><span>${escapeHtml(c)}</span><strong>${counts[c]}</strong></div>`).join('');
+  }
+
+  function renderReportList(period, entries){
+    const title = document.getElementById('reportListTitle');
+    const list = document.getElementById('reportList');
+    title.textContent = period==='today' ? 'Rencana hari ini' : 'Catatan dalam periode ini';
+
+    if(period==='today'){
+      const t = getPdr(todayKey());
+      if(t.plan.length){
+        list.innerHTML = t.plan.map(p=>{
+          const tag = p.category ? ` <span style="color:var(--coral-dark);font-weight:600;">(${escapeHtml(p.category)})</span>` : '';
+          return `<div class="activity-row"><div class="txt">• ${escapeHtml(p.text)}${tag}</div></div>`;
+        }).join('');
+      } else {
+        list.innerHTML = `<div class="empty"><div class="ico">📋</div><div class="t">Belum ada rencana</div><div class="d">Tambahkan di tab Plan–Do–Review</div></div>`;
+      }
+      return;
+    }
+
+    if(!entries.length){
+      list.innerHTML = `<div class="empty"><div class="ico">📖</div><div class="t">Belum ada catatan</div><div class="d">Isi Plan–Do–Review untuk melihat rekap di sini</div></div>`;
+      return;
+    }
+    list.innerHTML = entries.map(({date,entry})=>{
+      const thumb = entry.photos && entry.photos.length ? `<img class="thumb" src="${entry.photos[0]}">` : `<div class="thumb" style="display:flex;align-items:center;justify-content:center;font-size:15px;">📝</div>`;
+      const metaParts = [];
+      if(entry.plan && entry.plan.length) metaParts.push(`${entry.plan.length} rencana`);
+      if(entry.mood) metaParts.push(entry.mood);
+      if(entry.photos && entry.photos.length) metaParts.push(`${entry.photos.length} foto`);
+      const noteSrc = (entry.doNotes && entry.doNotes.trim()) || (entry.review && entry.review.trim()) || (entry.notes && entry.notes.trim()) || '';
+      const noteExcerpt = noteSrc ? (noteSrc.length > 90 ? noteSrc.slice(0,90).trim()+'…' : noteSrc) : '';
+      return `<div class="report-row">
+        ${thumb}
+        <div class="rinfo">
+          <div class="rdate">${new Date(date+'T00:00:00').toLocaleDateString('id-ID',{weekday:'short',day:'numeric',month:'short'})}</div>
+          <div class="rmeta">${metaParts.join(' · ') || 'Catatan tersimpan'}</div>
+          ${noteExcerpt ? `<div class="rmeta" style="white-space:normal;color:var(--ink);margin-top:2px;">${escapeHtml(noteExcerpt)}</div>` : ''}
+        </div>
+        <button class="rjump" data-date="${date}">Lihat</button>
+      </div>`;
+    }).join('');
+    list.querySelectorAll('.rjump').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        currentPdrDate = btn.dataset.date;
+        renderPdr();
+        document.querySelector('.tab-btn[data-view="pdr"]').click();
+      });
+    });
+  }
+
+  function renderAspectDist(period, entries){
+    const card = document.getElementById('reportAspectCard');
+    if(period==='today'){ card.style.display='none'; return; }
+    const counts = {};
+    entries.forEach(({entry})=>{
+      (entry.plan||[]).forEach(p=>{
+        if(p.category) counts[p.category] = (counts[p.category]||0)+1;
+      });
+    });
+    const keys = Object.keys(counts).sort((a,b)=>counts[b]-counts[a]);
+    if(!keys.length){ card.style.display='none'; return; }
+    card.style.display='block';
+    document.getElementById('reportAspectDist').innerHTML = keys.map(c=>`<div class="cat-dist-row"><span>${escapeHtml(c)}</span><strong>${counts[c]}</strong></div>`).join('');
+  }
+
+  function renderDashboard(){
+    const range = getPeriodRange(currentPeriod);
+    document.getElementById('periodLabel').textContent = range.label;
+    const entries = entriesInRange(range.start, range.end);
+
+    renderReportStats(currentPeriod, range, entries);
+    renderMoodDist(entries);
+    renderAspectDist(currentPeriod, entries);
+    renderCatDist(currentPeriod, range);
+    renderReportList(currentPeriod, entries);
+
+    const todayDayName = dayNameOf(todayKey());
+    document.getElementById('dashTodayDayName').textContent = todayDayName;
+    const sched = state.schedule[todayDayName] || [];
+    const schedList = document.getElementById('dashScheduleList');
+    if(sched.length){
+      schedList.innerHTML = sched.map(s=>`<div class="activity-row"><div class="txt">• ${escapeHtml(s)}</div></div>`).join('');
+    } else {
+      schedList.innerHTML = `<div class="empty"><div class="ico">🗓️</div><div class="t">Jadwal ${todayDayName} kosong</div><div class="d">Atur di tab Jadwal</div></div>`;
+    }
+
+    renderCycle();
+  }
+
+  document.getElementById('periodTabs').querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      currentPeriod = btn.dataset.p;
+      document.querySelectorAll('#periodTabs button').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      renderDashboard();
+    });
+  });
+  document.querySelector('#periodTabs button[data-p="today"]').classList.add('active');
+
+  function escapeHtml(s){
+    return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  // ---------- PLAN DO REVIEW ----------
+  function getPdr(dateKey){
+    if(!state.pdr[dateKey]) state.pdr[dateKey] = {plan:[],doNotes:'',review:'',notes:'',mood:'',photos:[]};
+    if(!state.pdr[dateKey].photos) state.pdr[dateKey].photos = [];
+    if(typeof state.pdr[dateKey].notes !== 'string') state.pdr[dateKey].notes = '';
+    return state.pdr[dateKey];
+  }
+
+  function renderPdr(){
+    document.getElementById('pdrDateLabel').textContent = pretty(currentPdrDate);
+    const entry = getPdr(currentPdrDate);
+    document.getElementById('doInput').value = entry.doNotes || '';
+    document.getElementById('reviewInput').value = entry.review || '';
+    document.getElementById('notesInput').value = entry.notes || '';
+    document.getElementById('moodInput').value = entry.mood || '';
+    renderPlanChips();
+    renderPhotos();
+    populatePlanCategorySelect();
+  }
+  function renderPlanChips(){
+    const entry = getPdr(currentPdrDate);
+    const wrap = document.getElementById('planChips');
+    if(!entry.plan.length){
+      wrap.innerHTML = `<span style="font-size:13px;color:var(--ink-soft);">Belum ada rencana ditambahkan</span>`;
+      return;
+    }
+    wrap.innerHTML = entry.plan.map((p,i)=>{
+      const tag = p.category ? ` · ${escapeHtml(p.category)}` : '';
+      return `<span class="chip">${escapeHtml(p.text)}${tag}<button data-i="${i}" class="chipDel">✕</button></span>`;
+    }).join('');
+    wrap.querySelectorAll('.chipDel').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        entry.plan.splice(parseInt(btn.dataset.i),1);
+        save(); renderPlanChips();
+      });
+    });
+  }
+  function populatePlanCategorySelect(){
+    const sel = document.getElementById('planCategorySelect');
+    const cur = sel.value;
+    sel.innerHTML = `<option value="">Tidak ditandai aspek</option>` + state.categories.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+    if(cur) sel.value = cur;
+  }
+
+  // ---------- PHOTOS ----------
+  function compressImage(file){
+    return new Promise((resolve, reject)=>{
+      const reader = new FileReader();
+      reader.onload = (e)=>{
+        const img = new Image();
+        img.onload = ()=>{
+          const maxDim = 900;
+          let w = img.width, h = img.height;
+          if(w > h && w > maxDim){ h = Math.round(h * (maxDim/w)); w = maxDim; }
+          else if(h > maxDim){ w = Math.round(w * (maxDim/h)); h = maxDim; }
+          const canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/jpeg', 0.72));
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function renderPhotos(){
+    const entry = getPdr(currentPdrDate);
+    const grid = document.getElementById('photoGrid');
+    let html = entry.photos.map((p,i)=>`
+      <div class="photo-thumb">
+        <img src="${p}">
+        <button class="rm" data-i="${i}">✕</button>
+      </div>`).join('');
+    html += `<button class="photo-add" id="photoAddBtn" type="button"><span>＋</span>Foto</button>`;
+    grid.innerHTML = html;
+    grid.querySelectorAll('.rm').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        entry.photos.splice(parseInt(btn.dataset.i),1);
+        save(); renderPhotos();
+      });
+    });
+    document.getElementById('photoAddBtn').addEventListener('click', ()=>{
+      document.getElementById('photoInput').click();
+    });
+  }
+
+  document.getElementById('photoInput').addEventListener('change', async (e)=>{
+    const files = Array.from(e.target.files || []);
+    if(!files.length) return;
+    const entry = getPdr(currentPdrDate);
+    for(const file of files){
+      try{
+        const dataUrl = await compressImage(file);
+        entry.photos.push(dataUrl);
+      }catch(err){ /* skip file that fails to load */ }
+    }
+    save(); renderPhotos();
+    e.target.value = '';
+  });
+
+  document.getElementById('planAddBtn').addEventListener('click', ()=>{
+    const input = document.getElementById('planInput');
+    const val = input.value.trim();
+    if(!val) return;
+    const cat = document.getElementById('planCategorySelect').value;
+    getPdr(currentPdrDate).plan.push({text:val, category:cat});
+    input.value='';
+    save(); renderPlanChips();
+  });
+  document.getElementById('planInput').addEventListener('keydown', e=>{
+    if(e.key==='Enter'){ e.preventDefault(); document.getElementById('planAddBtn').click(); }
+  });
+
+  document.getElementById('pdrPrev').addEventListener('click', ()=>{
+    const d = new Date(currentPdrDate+'T00:00:00'); d.setDate(d.getDate()-1);
+    currentPdrDate = fmtDate(d); renderPdr();
+  });
+  document.getElementById('pdrNext').addEventListener('click', ()=>{
+    const d = new Date(currentPdrDate+'T00:00:00'); d.setDate(d.getDate()+1);
+    currentPdrDate = fmtDate(d); renderPdr();
+  });
+
+  document.getElementById('pdrSaveBtn').addEventListener('click', ()=>{
+    const entry = getPdr(currentPdrDate);
+    entry.doNotes = document.getElementById('doInput').value;
+    entry.review = document.getElementById('reviewInput').value;
+    entry.notes = document.getElementById('notesInput').value;
+    entry.mood = document.getElementById('moodInput').value;
+    save();
+    const btn = document.getElementById('pdrSaveBtn');
+    const orig = btn.textContent;
+    btn.textContent = 'Tersimpan ✓';
+    setTimeout(()=>{btn.textContent=orig;}, 1200);
+    renderCycle();
+  });
+
+  // ---------- SCHEDULE ----------
+  function renderDayTabs(){
+    const wrap = document.getElementById('dayTabs');
+    wrap.innerHTML = DAYS.map(d=>`<button data-day="${d}" class="${d===currentScheduleDay?'active':''}">${d}</button>`).join('');
+    wrap.querySelectorAll('button').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        currentScheduleDay = btn.dataset.day;
+        renderDayTabs(); renderSchedule();
+      });
+    });
+  }
+  function renderSchedule(){
+    document.getElementById('scheduleDayTitle').textContent = currentScheduleDay;
+    const list = state.schedule[currentScheduleDay] || [];
+    const el = document.getElementById('scheduleList');
+    if(!list.length){
+      el.innerHTML = `<div class="empty"><div class="ico">🗓️</div><div class="t">Belum ada agenda</div><div class="d">Tambahkan mata pelajaran atau tema kegiatan</div></div>`;
+    } else {
+      el.innerHTML = list.map((s,i)=>`<div class="activity-row"><div class="txt">${escapeHtml(s)}</div><button data-i="${i}">Hapus</button></div>`).join('');
+      el.querySelectorAll('button').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          state.schedule[currentScheduleDay].splice(parseInt(btn.dataset.i),1);
+          save(); renderSchedule();
+        });
+      });
+    }
+  }
+  document.getElementById('scheduleAddBtn').addEventListener('click', ()=>{
+    const input = document.getElementById('scheduleInput');
+    const val = input.value.trim();
+    if(!val) return;
+    if(!state.schedule[currentScheduleDay]) state.schedule[currentScheduleDay]=[];
+    state.schedule[currentScheduleDay].push(val);
+    input.value='';
+    save(); renderSchedule();
+  });
+  document.getElementById('scheduleInput').addEventListener('keydown', e=>{
+    if(e.key==='Enter'){ e.preventDefault(); document.getElementById('scheduleAddBtn').click(); }
+  });
+
+  // ---------- MILESTONES ----------
+  function ageSortKey(age){
+    const m = /(\d+)/.exec(age);
+    return m ? parseInt(m[1]) : 999;
+  }
+  function renderAgeFilters(){
+    const ages = [...new Set(state.milestones.map(m=>m.age).filter(Boolean))];
+    ages.sort((a,b)=> ageSortKey(a)-ageSortKey(b) || a.localeCompare(b));
+    const filters = ['Semua', ...ages];
+    const wrap = document.getElementById('milestoneAgeFilters');
+    if(ages.length <= 1){ wrap.innerHTML=''; return; }
+    wrap.innerHTML = filters.map(f=>`<button data-f="${f}" class="${f===currentAgeFilter?'active':''}">${f==='Semua'?'Semua usia':f}</button>`).join('');
+    wrap.querySelectorAll('button').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        currentAgeFilter = btn.dataset.f;
+        renderAgeFilters(); renderMilestones();
+      });
+    });
+  }
+  function renderMilestoneFilters(){
+    const filters = ['Semua', ...state.categories];
+    const wrap = document.getElementById('milestoneFilters');
+    wrap.innerHTML = filters.map(f=>`<button data-f="${f}" class="${f===currentMilestoneFilter?'active':''}">${f}</button>`).join('');
+    wrap.querySelectorAll('button').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        currentMilestoneFilter = btn.dataset.f;
+        renderMilestoneFilters(); renderAgeFilters(); renderMilestones();
+      });
+    });
+  }
+  function renderMilestones(){
+    const el = document.getElementById('milestoneList');
+    let list = state.milestones;
+    if(currentMilestoneFilter!=='Semua') list = list.filter(m=>m.category===currentMilestoneFilter);
+    if(currentAgeFilter!=='Semua') list = list.filter(m=>m.age===currentAgeFilter);
+    if(!list.length){
+      el.innerHTML = `<div class="empty"><div class="ico">⭐</div><div class="t">Belum ada milestone</div><div class="d">Tambahkan milestone perkembangan pertama, atau coba filter lain</div></div>`;
+      return;
+    }
+    list = [...list].sort((a,b)=> (a.achieved===b.achieved)?0:(a.achieved?1:-1));
+    el.innerHTML = list.map(m=>`
+      <div class="m-card ${m.achieved?'done':''}">
+        <div class="m-top">
+          <div style="display:flex;gap:10px;flex:1;">
+            <button class="m-check ${m.achieved?'on':''}" data-id="${m.id}">${m.achieved?'✓':''}</button>
+            <div>
+              <div class="m-title">${escapeHtml(m.title)}</div>
+              <div class="m-cat">${escapeHtml(m.category)}${m.age?' · target '+escapeHtml(m.age):''}${m.achieved&&m.achievedDate?' · tercapai '+pretty(m.achievedDate):''}</div>
+              ${m.source?`<div class="m-note" style="color:var(--sage);font-weight:600;">📚 ${escapeHtml(m.source)}</div>`:''}
+              ${m.note?`<div class="m-note">${escapeHtml(m.note)}</div>`:''}
+            </div>
+          </div>
+          <button data-del="${m.id}" style="background:none;border:none;color:#B4472B;font-size:12.5px;opacity:.7;">Hapus</button>
+        </div>
+      </div>
+    `).join('');
+    el.querySelectorAll('.m-check').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const m = state.milestones.find(x=>x.id===btn.dataset.id);
+        m.achieved = !m.achieved;
+        m.achievedDate = m.achieved ? todayKey() : null;
+        save(); renderMilestones();
+      });
+    });
+    el.querySelectorAll('[data-del]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        state.milestones = state.milestones.filter(x=>x.id!==btn.dataset.del);
+        save(); renderMilestones();
+      });
+    });
+  }
+
+  function populateMCategorySelect(){
+    document.getElementById('mCategory').innerHTML = state.categories.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+    const presets = ['1 tahun','2 tahun','3 tahun','4 tahun','5 tahun'];
+    const existing = [...new Set(state.milestones.map(m=>m.age).filter(Boolean))];
+    const ageOptions = [...new Set([...presets, ...existing])];
+    document.getElementById('mAgeList').innerHTML = ageOptions.map(a=>`<option value="${escapeHtml(a)}">`).join('');
+  }
+
+  document.getElementById('openMilestoneModal').addEventListener('click', ()=>{
+    populateMCategorySelect();
+    document.getElementById('milestoneModalBg').classList.add('open');
+  });
+  document.getElementById('closeMilestoneModal').addEventListener('click', ()=>{
+    document.getElementById('milestoneModalBg').classList.remove('open');
+  });
+  document.getElementById('mSaveBtn').addEventListener('click', ()=>{
+    const title = document.getElementById('mTitle').value.trim();
+    if(!title) return;
+    state.milestones.push({
+      id: 'm_'+Date.now(),
+      title,
+      category: document.getElementById('mCategory').value,
+      age: document.getElementById('mAge').value.trim(),
+      note: document.getElementById('mNote').value.trim(),
+      source: '',
+      achieved:false,
+      achievedDate:null
+    });
+    document.getElementById('mTitle').value='';
+    document.getElementById('mAge').value='';
+    document.getElementById('mNote').value='';
+    save();
+    document.getElementById('milestoneModalBg').classList.remove('open');
+    renderMilestones();
+  });
+
+  // ---------- CATEGORY MANAGEMENT ----------
+  function renderCategoryChips(){
+    const wrap = document.getElementById('categoryChips');
+    if(!state.categories.length){
+      wrap.innerHTML = `<span style="font-size:13px;color:var(--ink-soft);">Belum ada kategori</span>`;
+      return;
+    }
+    wrap.innerHTML = state.categories.map((c,i)=>`<span class="chip">${escapeHtml(c)}<button data-i="${i}" class="catDel">✕</button></span>`).join('');
+    wrap.querySelectorAll('.catDel').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        state.categories.splice(parseInt(btn.dataset.i),1);
+        save();
+        renderCategoryChips();
+        renderMilestoneFilters(); renderAgeFilters(); renderMilestones();
+        populatePlanCategorySelect();
+      });
+    });
+  }
+  document.getElementById('openCategoryModal').addEventListener('click', ()=>{
+    renderCategoryChips();
+    document.getElementById('categoryModalBg').classList.add('open');
+  });
+  document.getElementById('closeCategoryModal').addEventListener('click', ()=>{
+    document.getElementById('categoryModalBg').classList.remove('open');
+    renderMilestoneFilters(); renderAgeFilters(); renderMilestones();
+    populatePlanCategorySelect();
+  });
+  document.getElementById('categoryAddBtn').addEventListener('click', ()=>{
+    const input = document.getElementById('categoryInput');
+    const val = input.value.trim();
+    if(!val) return;
+    if(state.categories.includes(val)){ input.value=''; return; }
+    state.categories.push(val);
+    input.value='';
+    save();
+    renderCategoryChips();
+  });
+  document.getElementById('categoryInput').addEventListener('keydown', e=>{
+    if(e.key==='Enter'){ e.preventDefault(); document.getElementById('categoryAddBtn').click(); }
+  });
+
+  // ---------- EXPORT: EXCEL & PDF ----------
+  function allSortedPdrDates(){
+    return Object.keys(state.pdr).filter(k=>hasContent(state.pdr[k])).sort();
+  }
+  function overallStats(){
+    const dates = allSortedPdrDates();
+    const moodCounts = {}, aspectCounts = {};
+    dates.forEach(k=>{
+      const e = state.pdr[k];
+      if(e.mood) moodCounts[e.mood] = (moodCounts[e.mood]||0)+1;
+      (e.plan||[]).forEach(p=>{ if(p.category) aspectCounts[p.category] = (aspectCounts[p.category]||0)+1; });
+    });
+    const achieved = state.milestones.filter(m=>m.achieved);
+    return {
+      totalHari: dates.length,
+      streak: computeStreak(),
+      totalMilestone: state.milestones.length,
+      totalMilestoneAchieved: achieved.length,
+      moodCounts, aspectCounts,
+      firstDate: dates.length ? dates[0] : null,
+      lastDate: dates.length ? dates[dates.length-1] : null
+    };
+  }
+
+  function exportExcel(){
+    if(typeof XLSX === 'undefined'){ alert('Gagal memuat pustaka Excel. Pastikan perangkat terhubung internet lalu coba lagi.'); return; }
+    const wb = XLSX.utils.book_new();
+    const stats = overallStats();
+
+    // Sheet 1: Ringkasan
+    const ringkasan = [
+      [`Jejak Belajar — Ringkasan Laporan (${activeChildName()})`],
+      ['Dibuat pada', pretty(todayKey())],
+      [],
+      ['Total hari tercatat', stats.totalHari],
+      ['Hari beruntun mencatat (streak)', stats.streak],
+      ['Milestone tercapai', `${stats.totalMilestoneAchieved} dari ${stats.totalMilestone}`],
+      ['Rentang catatan', stats.firstDate ? `${pretty(stats.firstDate)} — ${pretty(stats.lastDate)}` : '—'],
+      [],
+      ['Distribusi suasana belajar'],
+      ['Suasana','Jumlah hari'],
+      ...Object.keys(stats.moodCounts).map(k=>[k, stats.moodCounts[k]]),
+      [],
+      ['Aspek yang dilatih (dari tag rencana)'],
+      ['Aspek','Jumlah kegiatan'],
+      ...Object.keys(stats.aspectCounts).map(k=>[k, stats.aspectCounts[k]]),
+    ];
+    const ws1 = XLSX.utils.aoa_to_sheet(ringkasan);
+    ws1['!cols'] = [{wch:32},{wch:20}];
+    XLSX.utils.book_append_sheet(wb, ws1, 'Ringkasan');
+
+    // Sheet 2: Plan-Do-Review
+    const pdrHeader = ['Tanggal','Hari','Rencana (Plan)','Aspek yang ditandai','Pelaksanaan (Do)','Refleksi (Review)','Catatan Bebas','Suasana','Jumlah Foto'];
+    const pdrRows = allSortedPdrDates().map(k=>{
+      const e = state.pdr[k];
+      const planText = (e.plan||[]).map(p=>p.text).join(' | ');
+      const aspectText = (e.plan||[]).map(p=>p.category).filter(Boolean).join(', ');
+      return [k, dayNameOf(k), planText, aspectText, e.doNotes||'', e.review||'', e.notes||'', e.mood||'', (e.photos?e.photos.length:0)];
+    });
+    const ws2 = XLSX.utils.aoa_to_sheet([pdrHeader, ...pdrRows]);
+    ws2['!cols'] = [{wch:12},{wch:9},{wch:40},{wch:22},{wch:40},{wch:40},{wch:30},{wch:16},{wch:10}];
+    XLSX.utils.book_append_sheet(wb, ws2, 'Plan-Do-Review');
+
+    // Sheet 3: Milestone
+    const mHeader = ['Judul','Kategori','Target Usia','Status','Tanggal Tercapai','Sumber','Catatan'];
+    const mRows = state.milestones.map(m=>[
+      m.title, m.category, m.age||'', m.achieved?'Tercapai':'Belum tercapai',
+      m.achievedDate?pretty(m.achievedDate):'', m.source||'Custom (ditambahkan sendiri)', m.note||''
+    ]);
+    const ws3 = XLSX.utils.aoa_to_sheet([mHeader, ...mRows]);
+    ws3['!cols'] = [{wch:42},{wch:20},{wch:14},{wch:14},{wch:18},{wch:30},{wch:36}];
+    XLSX.utils.book_append_sheet(wb, ws3, 'Milestone');
+
+    // Sheet 4: Jadwal Mingguan
+    const jHeader = ['Hari','Daftar Kegiatan'];
+    const jRows = DAYS.map(d => [d, (state.schedule[d]||[]).join(' | ')]);
+    const ws4 = XLSX.utils.aoa_to_sheet([jHeader, ...jRows]);
+    ws4['!cols'] = [{wch:10},{wch:60}];
+    XLSX.utils.book_append_sheet(wb, ws4, 'Jadwal Mingguan');
+
+    XLSX.writeFile(wb, `jejak-belajar-laporan-${activeChildName().replace(/[^a-z0-9]+/gi,'-')}-${todayKey()}.xlsx`);
+  }
+
+  function exportPdf(){
+    if(typeof window.jspdf === 'undefined'){ alert('Gagal memuat pustaka PDF. Pastikan perangkat terhubung internet lalu coba lagi.'); return; }
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({unit:'pt', format:'a4'});
+    const stats = overallStats();
+    const marginX = 40;
+    let y = 50;
+
+    doc.setFont('helvetica','bold'); doc.setFontSize(18);
+    doc.text(`Jejak Belajar — Laporan Homeschool (${activeChildName()})`, marginX, y);
+    y += 20;
+    doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(100);
+    doc.text(`Dibuat pada ${pretty(todayKey())}`, marginX, y);
+    doc.setTextColor(0);
+    y += 26;
+
+    doc.setFont('helvetica','bold'); doc.setFontSize(12);
+    doc.text('Ringkasan Statistik', marginX, y); y += 6;
+    doc.autoTable({
+      startY: y,
+      margin:{left:marginX,right:marginX},
+      theme:'plain',
+      styles:{fontSize:10, cellPadding:3},
+      body: [
+        ['Total hari tercatat', String(stats.totalHari)],
+        ['Hari beruntun mencatat (streak)', String(stats.streak)],
+        ['Milestone tercapai', `${stats.totalMilestoneAchieved} dari ${stats.totalMilestone}`],
+        ['Rentang catatan', stats.firstDate ? `${pretty(stats.firstDate)} - ${pretty(stats.lastDate)}` : '-'],
+      ]
+    });
+    y = doc.lastAutoTable.finalY + 18;
+
+    if(Object.keys(stats.moodCounts).length){
+      doc.setFont('helvetica','bold'); doc.setFontSize(12);
+      doc.text('Distribusi Suasana Belajar', marginX, y); y += 6;
+      doc.autoTable({
+        startY:y, margin:{left:marginX,right:marginX}, theme:'grid', styles:{fontSize:9,cellPadding:4},
+        head:[['Suasana','Jumlah Hari']],
+        body: Object.keys(stats.moodCounts).map(k=>[k, String(stats.moodCounts[k])])
+      });
+      y = doc.lastAutoTable.finalY + 18;
+    }
+
+    if(Object.keys(stats.aspectCounts).length){
+      if(y > 680){ doc.addPage(); y = 50; }
+      doc.setFont('helvetica','bold'); doc.setFontSize(12);
+      doc.text('Aspek yang Dilatih (dari tag rencana)', marginX, y); y += 6;
+      doc.autoTable({
+        startY:y, margin:{left:marginX,right:marginX}, theme:'grid', styles:{fontSize:9,cellPadding:4},
+        head:[['Aspek','Jumlah Kegiatan']],
+        body: Object.keys(stats.aspectCounts).sort((a,b)=>stats.aspectCounts[b]-stats.aspectCounts[a]).map(k=>[k, String(stats.aspectCounts[k])])
+      });
+      y = doc.lastAutoTable.finalY + 18;
+    }
+
+    // Milestone table (new page for clarity)
+    doc.addPage(); y = 50;
+    doc.setFont('helvetica','bold'); doc.setFontSize(14);
+    doc.text('Pencapaian Milestone', marginX, y); y += 10;
+    doc.autoTable({
+      startY:y, margin:{left:marginX,right:marginX}, theme:'grid', styles:{fontSize:8.5,cellPadding:4},
+      head:[['Judul','Kategori','Status','Tgl Tercapai','Sumber']],
+      body: state.milestones.map(m=>[
+        m.title, m.category, m.achieved?'Tercapai':'Belum',
+        m.achievedDate?pretty(m.achievedDate):'-', m.source||'Custom'
+      ]),
+      columnStyles:{0:{cellWidth:180}}
+    });
+
+    // Plan-Do-Review table (new page)
+    const pdrDates = allSortedPdrDates();
+    if(pdrDates.length){
+      doc.addPage(); y = 50;
+      doc.setFont('helvetica','bold'); doc.setFontSize(14);
+      doc.text('Seluruh Catatan Plan-Do-Review', marginX, y); y += 10;
+      doc.autoTable({
+        startY:y, margin:{left:marginX,right:marginX}, theme:'grid', styles:{fontSize:7.5, cellPadding:4, overflow:'linebreak'},
+        head:[['Tanggal','Rencana','Do','Review','Catatan','Suasana']],
+        body: pdrDates.map(k=>{
+          const e = state.pdr[k];
+          const planText = (e.plan||[]).map(p=> p.category ? `${p.text} (${p.category})` : p.text).join('; ');
+          return [k, planText, e.doNotes||'', e.review||'', e.notes||'', e.mood||''];
+        }),
+        columnStyles:{0:{cellWidth:48},1:{cellWidth:110},2:{cellWidth:95},3:{cellWidth:95},4:{cellWidth:95},5:{cellWidth:52}}
+      });
+    }
+
+    doc.save(`jejak-belajar-laporan-${activeChildName().replace(/[^a-z0-9]+/gi,'-')}-${todayKey()}.pdf`);
+  }
+
+  document.getElementById('exportExcelBtn').addEventListener('click', exportExcel);
+  document.getElementById('exportPdfBtn').addEventListener('click', exportPdf);
+
+  // ---------- CHILD PROFILES ----------
+  function activeChildName(){
+    const c = master.children.find(c=>c.id===master.activeChildId);
+    return c ? c.name : 'Anak';
+  }
+  function renderChildTabs(){
+    const wrap = document.getElementById('childTabs');
+    wrap.innerHTML = master.children.map(c=>`<button data-id="${c.id}" class="${c.id===master.activeChildId?'active':''}">${escapeHtml(c.name)}</button>`).join('');
+    wrap.querySelectorAll('button').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        if(btn.dataset.id === master.activeChildId) return;
+        master.activeChildId = btn.dataset.id;
+        saveMaster();
+        syncStateToActiveChild();
+        currentPdrDate = todayKey();
+        currentScheduleDay = dayNameOf(todayKey());
+        currentMilestoneFilter = 'Semua';
+        currentAgeFilter = 'Semua';
+        renderAll();
+      });
+    });
+  }
+  function renderChildList(){
+    const wrap = document.getElementById('childList');
+    wrap.innerHTML = master.children.map(c=>`
+      <div class="child-row">
+        <input type="text" value="${escapeHtml(c.name)}" data-id="${c.id}" class="cNameInput">
+        <button class="cSave" data-id="${c.id}">Simpan</button>
+        <button class="cDel" data-id="${c.id}">Hapus</button>
+      </div>`).join('');
+    wrap.querySelectorAll('.cSave').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const input = wrap.querySelector(`.cNameInput[data-id="${btn.dataset.id}"]`);
+        const val = input.value.trim();
+        if(!val) return;
+        const c = master.children.find(c=>c.id===btn.dataset.id);
+        c.name = val;
+        saveMaster();
+        renderChildTabs();
+      });
+    });
+    wrap.querySelectorAll('.cDel').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        if(master.children.length <= 1){ alert('Minimal harus ada 1 profil anak.'); return; }
+        const c = master.children.find(c=>c.id===btn.dataset.id);
+        if(!confirm(`Hapus profil "${c.name}"? Semua catatan, jadwal, dan milestone anak ini akan terhapus permanen.`)) return;
+        delete master.childData[btn.dataset.id];
+        master.children = master.children.filter(c=>c.id!==btn.dataset.id);
+        if(master.activeChildId === btn.dataset.id) master.activeChildId = master.children[0].id;
+        saveMaster();
+        syncStateToActiveChild();
+        renderChildList();
+        renderAll();
+      });
+    });
+  }
+  document.getElementById('openChildModal').addEventListener('click', ()=>{
+    renderChildList();
+    document.getElementById('childModalBg').classList.add('open');
+  });
+  document.getElementById('closeChildModal').addEventListener('click', ()=>{
+    document.getElementById('childModalBg').classList.remove('open');
+  });
+  document.getElementById('childAddBtn').addEventListener('click', ()=>{
+    const input = document.getElementById('childInput');
+    const val = input.value.trim();
+    if(!val) return;
+    const id = newChildId();
+    master.children.push({id, name:val});
+    master.childData[id] = defaultChildData(true); // seed CDC milestones for the new child too
+    master.activeChildId = id;
+    saveMaster();
+    syncStateToActiveChild();
+    input.value = '';
+    currentPdrDate = todayKey();
+    currentScheduleDay = dayNameOf(todayKey());
+    currentMilestoneFilter = 'Semua';
+        currentAgeFilter = 'Semua';
+    document.getElementById('childModalBg').classList.remove('open');
+    renderAll();
+  });
+  document.getElementById('childInput').addEventListener('keydown', e=>{
+    if(e.key==='Enter'){ e.preventDefault(); document.getElementById('childAddBtn').click(); }
+  });
+
+  // ---------- DATA (export / import / reset) ----------
+  document.getElementById('exportBtn').addEventListener('click', ()=>{
+    // Exports ALL children's data in one file so nothing gets left behind.
+    const blob = new Blob([JSON.stringify(master,null,2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `jejak-belajar-backup-${todayKey()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+  document.getElementById('importBtn').addEventListener('click', ()=>{
+    document.getElementById('importFile').click();
+  });
+  document.getElementById('importFile').addEventListener('change', (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev)=>{
+      try{
+        const data = JSON.parse(ev.target.result);
+        if(data.children && data.childData){
+          // full multi-child backup -> replace everything
+          if(!confirm('File ini berisi cadangan lengkap (semua profil anak). Ini akan MENGGANTI semua data yang ada sekarang. Lanjutkan?')) return;
+          data.children.forEach(c=> normalizeChildData(data.childData[c.id]));
+          master = data;
+          if(!master.categories || !master.categories.length) master.categories = [...DEFAULT_CATS];
+          if(!master.activeChildId || !master.childData[master.activeChildId]) master.activeChildId = master.children[0].id;
+        } else if(data.pdr){
+          // legacy single-child backup -> add as a new child so nothing is overwritten
+          const id = newChildId();
+          const cd = normalizeChildData({ pdr:data.pdr||{}, schedule:data.schedule||{}, milestones:data.milestones||seedMilestones() });
+          master.children.push({id, name:'Dipulihkan dari cadangan'});
+          master.childData[id] = cd;
+          master.activeChildId = id;
+        } else {
+          throw new Error('format tidak dikenali');
+        }
+        saveMaster();
+        syncStateToActiveChild();
+        currentPdrDate = todayKey();
+        alert('Data berhasil dipulihkan.');
+        renderAll();
+      }catch(err){
+        alert('File tidak valid. Pastikan ini file cadangan .json dari aplikasi ini.');
+      }
+    };
+    reader.readAsText(file);
+  });
+  document.getElementById('resetBtn').addEventListener('click', ()=>{
+    if(confirm('Yakin ingin menghapus SEMUA data (semua profil anak)? Tindakan ini tidak bisa dibatalkan.')){
+      master = defaultMasterData();
+      saveMaster();
+      syncStateToActiveChild();
+      currentPdrDate = todayKey();
+      renderAll();
+    }
+  });
+
+  function renderAll(){
+    renderChildTabs();
+    renderHeader();
+    renderDashboard();
+    renderPdr();
+    renderDayTabs();
+    renderSchedule();
+    renderMilestoneFilters();
+    renderAgeFilters();
+    renderMilestones();
+  }
+
+  renderAll();
+})();
+</script>
+</body>
+</html>
