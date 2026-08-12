@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnostik Jejak Belajar</title>
+<style>
+  body{font-family:-apple-system,sans-serif;background:#FBF6EF;color:#2E2A24;padding:16px;line-height:1.5;}
+  h1{font-size:18px;}
+  h2{font-size:14px;margin-top:24px;background:#F1DCC8;padding:8px 10px;border-radius:8px;}
+  .ok{color:#2E7D32;font-weight:700;}
+  .bad{color:#B4472B;font-weight:700;}
+  textarea{width:100%;height:160px;font-family:monospace;font-size:11px;padding:8px;border-radius:8px;border:1px solid #ccc;box-sizing:border-box;}
+  .meta{font-size:13px;color:#6B6157;margin:4px 0 8px;}
+  button{padding:10px 16px;border-radius:8px;border:none;background:#C1622C;color:#fff;font-weight:700;margin:6px 6px 6px 0;}
+  .note{background:#DCE7DC;padding:10px 12px;border-radius:8px;font-size:13px;margin-top:16px;}
+</style>
+</head>
+<body>
+  <h1>🔍 Diagnostik Penyimpanan — Jejak Belajar</h1>
+  <p class="meta">Halaman ini HANYA membaca data yang ada — tidak mengubah atau menghapus apa pun. Aman dibuka.</p>
+
+  <h2>1. Data format baru (multi-anak) — key: jejakbelajar_multi_v1</h2>
+  <div id="multiStatus"></div>
+  <textarea id="multiContent" readonly></textarea>
+
+  <h2>2. Data format lama (single-anak) — key: jejakbelajar_data_v1</h2>
+  <div id="legacyStatus"></div>
+  <textarea id="legacyContent" readonly></textarea>
+
+  <h2>3. Semua key localStorage di situs ini</h2>
+  <div id="allKeys"></div>
+
+  <button onclick="copyAll()">📋 Copy semua hasil ini</button>
+
+  <div class="note">
+    Kalau kotak di atas ada isinya (bukan kosong), berarti datamu <strong>masih tersimpan</strong> — masalahnya ada di kode app, bukan datanya hilang. Screenshot atau copy hasil di halaman ini, lalu kirim ke Claude untuk dicek.
+  </div>
+
+<script>
+function describe(key, statusId, contentId){
+  const el = document.getElementById(statusId);
+  const box = document.getElementById(contentId);
+  try{
+    const raw = localStorage.getItem(key);
+    if(raw === null){
+      el.innerHTML = '<span class="bad">❌ Tidak ditemukan</span>';
+      box.value = '(kosong / tidak ada)';
+    } else {
+      let pretty = raw;
+      try{ pretty = JSON.stringify(JSON.parse(raw), null, 2); }catch(e){}
+      const sizeKb = (raw.length/1024).toFixed(1);
+      el.innerHTML = `<span class="ok">✅ Ditemukan</span> — ukuran ${sizeKb} KB`;
+      box.value = pretty;
+    }
+  }catch(e){
+    el.innerHTML = '<span class="bad">Error membaca: '+e.message+'</span>';
+  }
+}
+describe('jejakbelajar_multi_v1','multiStatus','multiContent');
+describe('jejakbelajar_data_v1','legacyStatus','legacyContent');
+
+const allKeysEl = document.getElementById('allKeys');
+try{
+  const keys = Object.keys(localStorage);
+  if(keys.length===0){
+    allKeysEl.innerHTML = '<span class="bad">Tidak ada key sama sekali di localStorage situs ini.</span>';
+  } else {
+    allKeysEl.innerHTML = '<ul>' + keys.map(k=>{
+      const v = localStorage.getItem(k);
+      return `<li><strong>${k}</strong> — ${(v.length/1024).toFixed(1)} KB</li>`;
+    }).join('') + '</ul>';
+  }
+}catch(e){
+  allKeysEl.innerHTML = 'Error: '+e.message;
+}
+
+function copyAll(){
+  const text = 'MULTI:\n' + document.getElementById('multiContent').value + '\n\nLEGACY:\n' + document.getElementById('legacyContent').value + '\n\nALL KEYS:\n' + allKeysEl.innerText;
+  navigator.clipboard.writeText(text).then(()=>alert('Tersalin! Tempel ke chat Claude.')).catch(()=>alert('Gagal copy otomatis, silakan screenshot saja.'));
+}
+</script>
+</body>
+</html>
