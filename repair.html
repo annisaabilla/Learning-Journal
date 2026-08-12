@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perbaikan Data — Jejak Belajar</title>
+<style>
+  body{font-family:-apple-system,sans-serif;background:#FBF6EF;color:#2E2A24;padding:16px;line-height:1.5;max-width:640px;margin:0 auto;}
+  h1{font-size:19px;}
+  h2{font-size:15px;margin-top:22px;}
+  .card{background:#fff;border:1px solid #E9DFD2;border-radius:12px;padding:14px;margin:12px 0;}
+  .ok{color:#2E7D32;font-weight:700;}
+  .bad{color:#B4472B;font-weight:700;}
+  .warn{background:#F1E3C4;padding:10px 12px;border-radius:8px;font-size:13.5px;margin:14px 0;}
+  ul{padding-left:20px;font-size:14px;}
+  button{padding:12px 18px;border-radius:10px;border:none;background:#C1622C;color:#fff;font-weight:700;font-size:15px;margin:8px 8px 8px 0;}
+  button:disabled{background:#ccc;}
+  button.secondary{background:#6B8F71;}
+  #log{white-space:pre-wrap;font-family:monospace;font-size:12px;background:#2E2A24;color:#DCE7DC;padding:10px;border-radius:8px;margin-top:12px;display:none;}
+</style>
+</head>
+<body>
+  <h1>🔧 Perbaikan Data — Jejak Belajar</h1>
+  <p>Halaman ini menggabungkan catatan dari penyimpanan lama (<code>jejakbelajar_data_v1</code>) ke penyimpanan baru (<code>jejakbelajar_multi_v1</code>) yang dipakai profil anak aktif — <strong>hanya menambahkan tanggal yang belum ada</strong>, tidak akan menimpa atau menghapus catatan yang sudah ada di data baru.</p>
+
+  <div class="card" id="scanResult">Memindai data…</div>
+
+  <div class="warn">⚠️ Disarankan: sebelum lanjut, buka <a href="index.html">index.html</a> dulu dan export cadangan .json dari tab Data (kalau bisa), untuk jaga-jaga tambahan.</div>
+
+  <button id="runBtn" disabled>Jalankan Penggabungan</button>
+  <button class="secondary" onclick="location.href='index.html'">Buka App</button>
+
+  <div id="log"></div>
+
+<script>
+const MULTI_KEY = 'jejakbelajar_multi_v1';
+const LEGACY_KEY = 'jejakbelajar_data_v1';
+let multi = null, legacy = null;
+let missingDates = [];
+let missingScheduleDays = [];
+
+function scan(){
+  const scanEl = document.getElementById('scanResult');
+  try{
+    const multiRaw = localStorage.getItem(MULTI_KEY);
+    const legacyRaw = localStorage.getItem(LEGACY_KEY);
+    if(!multiRaw || !legacyRaw){
+      scanEl.innerHTML = '<span class="bad">Salah satu data tidak ditemukan — tidak ada yang perlu digabung, atau sudah pernah digabung sebelumnya.</span>';
+      return;
+    }
+    multi = JSON.parse(multiRaw);
+    legacy = JSON.parse(legacyRaw);
+
+    if(!multi.children || !multi.children.length){
+      scanEl.innerHTML = '<span class="bad">Struktur data baru tidak dikenali. Hubungi Claude dengan screenshot ini.</span>';
+      return;
+    }
+    const activeId = multi.activeChildId || multi.children[0].id;
+    const cd = multi.childData[activeId];
+    if(!cd){
+      scanEl.innerHTML = '<span class="bad">Profil anak aktif tidak ditemukan di data baru.</span>';
+      return;
+    }
+
+    const legacyDates = Object.keys(legacy.pdr || {});
+    const multiDates = Object.keys(cd.pdr || {});
+    missingDates = legacyDates.filter(d => !multiDates.includes(d));
+
+    const legacyDays = Object.keys(legacy.schedule || {});
+    missingScheduleDays = legacyDays.filter(d => !(cd.schedule && cd.schedule[d] && cd.schedule[d].length));
+
+    let html = `<strong>Profil anak aktif:</strong> ${escapeHtml((multi.children.find(c=>c.id===activeId)||{}).name || activeId)}<br>`;
+    html += `<strong>Tanggal di data lama:</strong> ${legacyDates.length}<br>`;
+    html += `<strong>Tanggal di data baru:</strong> ${multiDates.length}<br><br>`;
+
+    if(missingDates.length === 0 && missingScheduleDays.length === 0){
+      html += '<span class="ok">✅ Tidak ada yang hilang — semua tanggal dari data lama sudah ada di data baru. Tidak perlu digabung.</span>';
+    } else {
+      html += `<span class="bad">Ditemukan ${missingDates.length} tanggal catatan yang ADA di data lama tapi BELUM ADA di data baru:</span>`;
+      html += '<ul>' + missingDates.map(d=>`<li>${d}</li>`).join('') + '</ul>';
+      if(missingScheduleDays.length){
+        html += `<span class="bad">Juga ${missingScheduleDays.length} hari jadwal yang belum ada:</span> ${missingScheduleDays.join(', ')}`;
+      }
+      document.getElementById('runBtn').disabled = false;
+    }
+    scanEl.innerHTML = html;
+  }catch(e){
+    scanEl.innerHTML = '<span class="bad">Error memindai: '+e.message+'</span>';
+  }
+}
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+document.getElementById('runBtn').addEventListener('click', ()=>{
+  const logEl = document.getElementById('log');
+  logEl.style.display = 'block';
+  let log = 'Mulai penggabungan...\n';
+  try{
+    const activeId = multi.activeChildId || multi.children[0].id;
+    const cd = multi.childData[activeId];
+    if(!cd.pdr) cd.pdr = {};
+    if(!cd.schedule) cd.schedule = {};
+
+    missingDates.forEach(d=>{
+      cd.pdr[d] = legacy.pdr[d];
+      log += `+ Ditambahkan catatan ${d}\n`;
+    });
+    missingScheduleDays.forEach(d=>{
+      cd.schedule[d] = legacy.schedule[d];
+      log += `+ Ditambahkan jadwal ${d}\n`;
+    });
+
+    localStorage.setItem(MULTI_KEY, JSON.stringify(multi));
+    log += '\n✅ Selesai! Data berhasil digabung dan disimpan.\nSilakan buka app dan cek — buka tab Plan-Do-Review lalu tab Dashboard untuk memastikan.';
+    document.getElementById('runBtn').disabled = true;
+    document.getElementById('runBtn').textContent = 'Selesai ✓';
+  }catch(e){
+    log += '\n❌ Error: '+e.message;
+  }
+  logEl.textContent = log;
+});
+
+scan();
+</script>
+</body>
+</html>
